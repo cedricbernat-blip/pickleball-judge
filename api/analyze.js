@@ -5,16 +5,21 @@ const anthropic = new Anthropic({
 })
 
 export default async function handler(req, res) {
-  // Only accept POST
   if (req.method !== 'POST') {
     return res.status(405).json({ error: 'Method not allowed' })
   }
 
   try {
-    const { imageBase64, imageMediaType } = req.body
+    let { imageBase64, imageMediaType } = req.body
 
     if (!imageBase64 || !imageMediaType) {
       return res.status(400).json({ error: 'Missing image data' })
+    }
+
+    // Force JPEG for unsupported formats (HEIC, etc.)
+    const supportedTypes = ['image/jpeg', 'image/png', 'image/gif', 'image/webp']
+    if (!supportedTypes.includes(imageMediaType)) {
+      imageMediaType = 'image/jpeg'
     }
 
     const response = await anthropic.messages.create({
