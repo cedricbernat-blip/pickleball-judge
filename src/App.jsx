@@ -73,6 +73,10 @@ function App() {
       if (videoRef.current) {
         videoRef.current.srcObject = stream
         videoRef.current.play()
+        // Force display on iOS
+videoRef.current.setAttribute('playsinline', true)
+videoRef.current.setAttribute('webkit-playsinline', true)
+await videoRef.current.play()
       }
       setMode('watching')
       startFrameCapture()
@@ -247,12 +251,18 @@ function App() {
               backgroundColor: '#000'
             }}>
               <video
-                ref={videoRef}
-                autoPlay
-                playsInline
-                muted
-                style={{ width: '100%', display: 'block', borderRadius: '15px' }}
-              />
+  ref={videoRef}
+  autoPlay
+  playsInline
+  muted
+  controls={false}
+  style={{
+    width: '100%',
+    display: 'block',
+    borderRadius: '15px',
+    transform: 'scaleX(1)'
+  }}
+/>
               <div style={{
                 position: 'absolute',
                 top: '10px',
